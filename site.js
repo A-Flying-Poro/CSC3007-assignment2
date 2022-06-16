@@ -95,8 +95,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 .style('left', `${event.x + 40}px`)
                 .style('top', `${event.y - 20}px`)
                 .style('text-align', 'center')
-                .text(d[1] - d[0])
-            console.log(event.x);
+                .html(`<b>${d.data.year}</b><br /><b>${d.current}</b><br />${d[1] - d[0]}`)
         }
         function mouseleave(event, d) {
             tooltip.style('opacity', 0);
@@ -114,7 +113,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
             .style('fill', d => colourScale(d.key))
             // Drawing crime per year
             .selectAll('rect')
-            .data(d => d)
+            .data(d => {
+                for (const crime of d) {
+                    crime.current = d.key
+                }
+                return d
+            })
             .enter()
             .append('rect')
             .attr('x', d => xAxis(d.data.year))
