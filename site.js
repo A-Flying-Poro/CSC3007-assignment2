@@ -47,6 +47,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
             .offset(d3.stackOffsetNone);
         const stackedData = stack(crimesPerYear);
 
+
+
         // Labels
         // x-axis labels
         const xLabels = crimesPerYear.map(d => d.year);
@@ -70,6 +72,38 @@ document.addEventListener('DOMContentLoaded', (event) => {
             .domain(crimesNames)
             .range(colours);
 
+
+
+        // Tooltips
+        const tooltip = d3.select('#dataChart')
+            .append('div')
+            .style('opacity', 0)
+            .attr('class', 'tooltip')
+            .style('background-color', 'lightgray')
+            .style('color', 'black')
+            .style('border', 'solid')
+            .style('border-width', '1px')
+            .style('border-radius', '2px')
+            .style('padding', '5px')
+            .style('position', 'absolute');
+
+        function mouseover(event, d) {
+            tooltip.style('opacity', 1);
+        }
+        function mousemove(event, d) {
+            tooltip
+                .style('left', `${event.x + 40}px`)
+                .style('top', `${event.y - 20}px`)
+                .style('text-align', 'center')
+                .text(d[1] - d[0])
+            console.log(event.x);
+        }
+        function mouseleave(event, d) {
+            tooltip.style('opacity', 0);
+        }
+
+
+
         // Bars
         dataSvg.append('g')
             // Group same crimes over years together
@@ -86,16 +120,21 @@ document.addEventListener('DOMContentLoaded', (event) => {
             .attr('x', d => xAxis(d.data.year))
             .attr('y', d => yAxis(d[1]))
             .attr('width', xAxis.bandwidth())
-            .attr('height', d => (yAxis(d[0]) - yAxis(d[1])));
+            .attr('height', d => (yAxis(d[0]) - yAxis(d[1])))
+            .on('mouseover', mouseover)
+            .on('mouseleave', mouseleave)
+            .on('mousemove', mousemove);
 
-        // Legend
+
+
+        // Legend (Broken, drawn out of view box)
         const legend = dataSvg
             .selectAll('.legend')
             .data(colours)
             .enter()
             .append('g')
             .attr('class', 'legend')
-            .attr('transform', (d, i) => `translate(30, ${i} * 22)`);
+            .attr('transform', (d, i) => `translate(30, ${i * 22})`);
 
         legend.append('rect')
             .attr('x', width - 20)
@@ -103,11 +142,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
             .attr('height', 20)
             .style('fill', (d, i) => colours.slice().reverse()[i]);
 
+        const crimeNamesReverse = [...crimesNames].reverse()
         legend.append('text')
             .attr('x', width + 5)
             .attr('y', 10)
             .attr('dy', '.35rem')
             .attr('text-anchor', 'start')
-            .text((d, i) => crimesNames.values().slice().reverse()[i])
+            .text((d, i) => crimeNamesReverse[i]);
     });
 });
