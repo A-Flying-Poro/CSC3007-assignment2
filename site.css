@@ -1,0 +1,12 @@
+body.dark-mode {
+    /*Dark Mode*/
+    background-color: #36393f;
+    color: white;
+    -webkit-transition: background-color .15s ease-in-out;
+    -ms-transition: background-color .15s ease-in-out;
+    transition: background-color .15s ease-in-out;
+}
+
+.custom-font {
+    font-family: 'Roboto', sans-serif;
+}
